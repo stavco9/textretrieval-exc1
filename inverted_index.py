@@ -57,7 +57,7 @@ class InvertedIndex():
         return lst_internal_docs
     
     def extract_indices_from_text(self, limit=None):
-        if not limit:
+        if not limit or limit > len(self.docs_list):
             limit = len(self.docs_list)
 
         for doc_object in self.docs_list[:limit]:
@@ -73,6 +73,13 @@ class InvertedIndex():
     
     def print_top_n_words(self, n):
         most_common_words = sorted(self.indices, key=lambda k: len(self.indices[k]), reverse=True)[:n]
+        self.print_internal(most_common_words)
+
+    def print_bottom_n_words(self, n):
+        most_common_words = sorted(self.indices, key=lambda k: len(self.indices[k]), reverse=False)[:n]
+        self.print_internal(most_common_words)
+    
+    def print_internal(self, most_common_words):
         for word in most_common_words:
             word_indices_to_print = []
             for doc in self.indices[word]:
