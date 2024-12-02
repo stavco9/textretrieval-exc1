@@ -60,24 +60,28 @@ class InvertedIndex():
         if not limit or limit > len(self.docs_list):
             limit = len(self.docs_list)
 
-        for doc_object in self.docs_list[:limit]:
+        for idx, doc_object in enumerate(self.docs_list[:limit]):
             doc_index = doc_object['doc_index']
             doc_id = doc_object['doc_id']
-            print(f"Current doc is {doc_index, doc_id}")
-            for word in doc_object['doc_text'].split():
+            if idx % 1000 == 0:
+                print(f"Indexed {idx} docs out of {limit}")
+            for word in set(doc_object['doc_text'].split()):
                 if not word in self.indices:
                     self.indices[word] = []
                 
-                if not doc_index in [x[0] for x in self.indices[word]]:
-                    self.indices[word].append((doc_index, doc_id))
+                self.indices[word].append((doc_index, doc_id))
     
-    def print_top_n_words(self, n):
+    def get_top_n_words(self, n, print=False):
         most_common_words = sorted(self.indices, key=lambda k: len(self.indices[k]), reverse=True)[:n]
-        self.print_internal(most_common_words)
+        if print:
+            self.print_internal(most_common_words)
+        return most_common_words
 
-    def print_bottom_n_words(self, n):
+    def get_bottom_n_words(self, n, print=False):
         most_common_words = sorted(self.indices, key=lambda k: len(self.indices[k]), reverse=False)[:n]
-        self.print_internal(most_common_words)
+        if print:
+            self.print_internal(most_common_words)
+        return most_common_words
     
     def print_internal(self, most_common_words):
         for word in most_common_words:
