@@ -18,7 +18,7 @@ def main():
     for query in b_retiver.queries():
         print(f"Query: {query}")
         # print(f"Result: {b_retiver.process_query_rpn(query)}")
-        retrievaled_q_str += " ".join([item[1] for item in b_retiver.process_query_rpn(query)]) + "\n"
+        retrievaled_q_str += f"Result for query \"{query}\" :\n" + " ".join([item[1] for item in b_retiver.process_query_rpn(query)]) + "\n\n"
     
     with open('Part_2.txt', 'w') as f:
         f.write(retrievaled_q_str)
