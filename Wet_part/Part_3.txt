@@ -12,15 +12,15 @@ Top 10 terms:
 
 Bottom 10 terms:
 1: reppression
-2: reinformed
-3: wemust
+2: wemust
+3: reinformed
 4: creditorbankers
 5: hatful
 6: crookbashing
 7: wolfswinkel
-8: tarsplotched
-9: mossflecked
-10: mashall
+8: tobefixed
+9: tarsplotched
+10: mossflecked
 
 The different characteristics between the group of terms is:
 The top 10 terms are preposition words, the the bottom 10 terms are words with spelling errors

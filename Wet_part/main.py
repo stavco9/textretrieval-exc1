@@ -16,9 +16,10 @@ def main():
     q_path = 'BooleanQueries.txt'
     b_retiver = BooleanRetrieval(parser, queries_path=q_path)
     for query in b_retiver.queries():
-        print(f"Query: {query}")
         # print(f"Result: {b_retiver.process_query_rpn(query)}")
-        retrievaled_q_str += " ".join([item[1] for item in b_retiver.process_query_rpn(query)]) + "\n"
+        query_result = b_retiver.process_query_rpn(query)
+        print(f"Query: \"{query}\" has a total {len(query_result)} documents")
+        retrievaled_q_str += " ".join([item[1] for item in query_result]) + "\n"
     
     with open('Part_2.txt', 'w') as f:
         f.write(retrievaled_q_str)
