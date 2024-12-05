@@ -1,5 +1,6 @@
 import os
 
+
 class BooleanRetrieval:
     def __init__(self, r_index, queries_path):
         self.r_index = r_index
@@ -29,10 +30,15 @@ class BooleanRetrieval:
         """
         stack = []
         operators = {"AND": self.op_and,
-                     "OR": self.op_or, "NOT": self.op_and_not}
+                     "OR": self.op_or,
+                     "NOT": self.op_and_not
+                     }
 
         if len(query.split()) == 1:
-            return self.op_simple(query)
+            term = query.split()[0]
+            if term not in self.r_index.indices:
+                return []  # Return an empty result if the term is not in the index
+            return self.op_simple(term)
 
         for token in query.split():
             if token in operators:  # If token is an operator
@@ -77,7 +83,8 @@ class BooleanRetrieval:
         while i < len(s_list) and j < len(l_list):
             if s_list[i][0] == l_list[j][0]:
                 # Internal IDs match, add the external ID to the result
-                result.append(s_list[i])
+                if not result or result[-1][0] != s_list[i][0]:
+                    result.append(s_list[i])
                 i += 1
                 j += 1
             elif s_list[i][0] < l_list[j][0]:
@@ -88,46 +95,52 @@ class BooleanRetrieval:
                 j += 1
 
         return result
-
+    
     def op_or(self, s_list, l_list):
-        """OR operation between two lists of tuples [(internal_id, external_id)...]"""
+        """OR operation between two lists of tuples [(internal_id, external_id)...]. Ensures no duplicates."""
         result = []
         i, j = 0, 0  # Pointers for s_list and l_list
 
+        def add_to_result(result, item):
+            """Helper function to add an item to the result list if it's not a duplicate."""
+            if not result or result[-1][0] != item[0]:
+                result.append(item)
+
         while i < len(s_list) and j < len(l_list):
             if s_list[i][0] == l_list[j][0]:
-                # Internal IDs match, add one
-                result.append(s_list[i])
+                add_to_result(result, s_list[i])
                 i += 1
                 j += 1
             elif s_list[i][0] < l_list[j][0]:
-                result.append(s_list[i])
+                add_to_result(result, s_list[i])
                 i += 1
             else:
-                result.append(l_list[j])
+                add_to_result(result, l_list[j])
                 j += 1
 
-        # Append any remaining elements from s_list
+        # Append any remaining elements from s_list, ensuring no duplicates
         while i < len(s_list):
-            result.append(s_list[i])
+            add_to_result(result, s_list[i])
             i += 1
 
-        # Append any remaining elements from l_list
+        # Append any remaining elements from l_list, ensuring no duplicates
         while j < len(l_list):
-            result.append(l_list[j])
+            add_to_result(result, l_list[j])
             j += 1
 
         return result
 
+
     def op_and_not(self, yes_list, not_list):
-        """AND NOT operation between two lists of tuples [(internal_id, external_id)...]"""
+        """AND NOT operation between two lists of tuples [(internal_id, external_id)...]."""
         result = []
-        i, j = 0, 0  # Pointers for yes_list and not_list
+        i, j = 0, 0
 
         while i < len(yes_list) and j < len(not_list):
             if yes_list[i][0] == not_list[j][0]:
-                # Skip matching elements
-                i += 1
+                # Skip all matching elements in yes_list
+                while i < len(yes_list) and yes_list[i][0] == not_list[j][0]:
+                    i += 1
                 j += 1
             elif yes_list[i][0] < not_list[j][0]:
                 result.append(yes_list[i])
@@ -141,6 +154,7 @@ class BooleanRetrieval:
             i += 1
 
         return result
+
 
     def op_simple(self, term):
         return [doc for doc in self.r_index.indices[term]]
