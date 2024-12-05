@@ -13,7 +13,7 @@ class InvertedIndex():
     def extract_docs(self, limit=None):
         count = 0
         
-        for filepath in glob.iglob(self.dir + '**/**', recursive=True):
+        for filepath in sorted(glob.iglob(self.dir + '**/**', recursive=True)):
             if limit and count >= limit:
                 break
             

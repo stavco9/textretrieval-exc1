@@ -13,7 +13,7 @@ def main():
 
     # Part 2
     print("PART 2")
-    q_path = 'Wet_part\BooleanQueries.txt'
+    q_path = 'BooleanQueries.txt'
     b_retiver = BooleanRetrieval(parser, queries_path=q_path)
     for query in b_retiver.queries():
         # print(f"Result: {b_retiver.process_query_rpn(query)}")
